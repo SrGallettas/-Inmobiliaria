@@ -1,0 +1,2 @@
+.related-section{padding:110px 0 130px;background:var(--cream)}.related-section h2{margin:0 0 45px;font:500 clamp(42px,5vw,64px) var(--serif)}.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.related-grid .property-image-wrap{height:310px}
+@media(max-width:800px){.related-grid{grid-template-columns:1fr 1fr}.related-grid article:last-child{display:none}}@media(max-width:550px){.related-section{padding:75px 0}.related-grid{grid-template-columns:1fr}.related-grid article:last-child{display:block}}

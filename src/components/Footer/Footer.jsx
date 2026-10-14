@@ -1,0 +1,4 @@
+import './Footer.css'
+import { Link } from 'react-router'
+function Footer() { return <footer className="footer"><div className="container footer-main"><div className="footer-brand"><span>LUMERA</span><p>Casas con luz.<br />Vidas con historia.</p></div><div><h3>Explora</h3><Link to="/inmuebles">Comprar</Link><Link to="/contacto">Vender</Link><Link to="/?seccion=zonas">Zonas</Link></div><div><h3>Conócenos</h3><Link to="/?seccion=metodo">Nuestro método</Link><Link to="/contacto">Contacto</Link><Link to="/">Preguntas frecuentes</Link></div><div className="footer-contact"><h3>Hablemos</h3><a href="tel:+34910000000">+34 910 000 000</a><a href="mailto:hola@lumera.es">hola@lumera.es</a><p>Lun–Vie · 9:00–19:00</p></div></div><div className="container footer-bottom"><span>© 2026 Lumera Inmobiliaria</span><div><a href="#">Privacidad</a><a href="#">Cookies</a><a href="#">Instagram</a></div></div></footer> }
+export default Footer

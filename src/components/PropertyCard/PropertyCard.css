@@ -1,0 +1,145 @@
+.property-card {
+    min-width: 0
+}
+
+.property-image-wrap {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background: #d8d5cf
+}
+
+.property-image-link { display: block; width: 100%; height: 100% }
+.property-topline h3 a { text-decoration: none }
+.property-topline h3 a:hover { color: var(--accent) }
+
+.property-featured .property-image-wrap {
+    height: 540px
+}
+
+.property-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .7s cubic-bezier(.2, .8, .2, 1)
+}
+
+.property-card:hover .property-image-wrap img {
+    transform: scale(1.035)
+}
+
+.property-badge,
+.property-type {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    padding: 8px 11px;
+    color: var(--ink);
+    background: rgba(255, 253, 248, .92);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase
+}
+
+.property-type {
+    top: auto;
+    bottom: 18px;
+    color: white;
+    background: rgba(13, 39, 32, .72)
+}
+
+.heart-button {
+    position: absolute;
+    top: 17px;
+    right: 17px;
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: var(--ink);
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 253, 248, .92);
+    cursor: pointer
+}
+
+.heart-button svg {
+    width: 18px
+}
+
+.heart-button svg.filled {
+    color: var(--accent);
+    fill: var(--accent)
+}
+
+.property-body {
+    padding-top: 20px
+}
+
+.property-topline {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 20px
+}
+
+.property-topline p {
+    margin: 0 0 6px;
+    color: var(--ink-soft);
+    font-size: 11px;
+    letter-spacing: .04em
+}
+
+.property-topline h3 {
+    margin: 0;
+    font: 500 27px/1.15 var(--serif)
+}
+
+.property-topline strong {
+    padding-top: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap
+}
+
+.property-body ul {
+    display: flex;
+    gap: 18px;
+    margin: 18px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+    color: var(--ink-soft);
+    font-size: 11px
+}
+
+.property-body li:not(:last-child):after {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin-left: 18px;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: #a6aaa6
+}
+
+.property-body li b {
+    color: var(--ink)
+}
+
+@media(max-width:900px) {
+    .property-featured .property-image-wrap {
+        height: 480px
+    }
+}
+
+@media(max-width:640px) {
+
+    .property-image-wrap,
+    .property-featured .property-image-wrap {
+        height: 330px
+    }
+}
