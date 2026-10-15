@@ -2,11 +2,11 @@ import { useSearchParams } from 'react-router'
 import Filters from '../../components/Filters/Filters'
 import PropertyGrid from '../../components/PropertyGrid/PropertyGrid'
 import Seo from '../../components/Seo/Seo'
-import { properties } from '../../data/properties'
+import { properties as localProperties } from '../../data/properties'
 import { filterProperties, paramsToFilters } from '../../utils/propertyFilters'
 import '../pages.css'
 
-function PropertiesPage({ favorites, onFavorite }) {
+function PropertiesPage({ favorites, onFavorite, properties = localProperties }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = paramsToFilters(searchParams)
   const visibleProperties = filterProperties(properties, filters)

@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import SearchPanel from '../../components/SearchPanel/SearchPanel'
 import PropertyCard from '../../components/PropertyCard/PropertyCard'
 import Seo from '../../components/Seo/Seo'
-import { featuredProperties, properties } from '../../data/properties'
+import { properties as localProperties } from '../../data/properties'
 import '../../App.css'
 
 const cities = [
@@ -15,7 +15,8 @@ const cities = [
 ]
 function ArrowIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg> }
 
-function HomePage({ favorites, onFavorite }) {
+function HomePage({ favorites, onFavorite, properties = localProperties }) {
+  const featuredProperties = properties.filter((property) => property.featured)
   return <>
     <Seo title="Lumera Inmobiliaria" description="Viviendas seleccionadas en las mejores ciudades y destinos de España. Encuentra una casa con carácter para comprar o alquilar." />
     <section className="hero-section" aria-labelledby="hero-title"><div className="hero-image" role="img" aria-label="Villa contemporánea frente al mar" /><div className="hero-shade" /><div className="hero-content container"><p className="eyebrow light">Viviendas excepcionales · España</p><h1 id="hero-title">Tu próximo capítulo<br />empieza <em>aquí.</em></h1><p className="hero-copy">Una selección cuidada de hogares con carácter, en los lugares donde realmente quieres vivir.</p><SearchPanel /></div><div className="hero-index" aria-hidden="true"><span>01</span><i /><span>04</span></div><button className="scroll-cue" type="button" onClick={() => document.querySelector('#destacadas')?.scrollIntoView({ behavior: 'smooth' })}><span>Descubrir</span><span aria-hidden="true">↓</span></button></section>

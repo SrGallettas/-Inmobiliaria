@@ -11,12 +11,12 @@ import FaqPage from './pages/FaqPage/FaqPage'
 import PrivacyPage from './pages/PrivacyPage/PrivacyPage'
 import CookiesPage from './pages/CookiesPage/CookiesPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
-import { formatPrice, properties } from './data/properties'
+import { formatPrice, properties as localProperties } from './data/properties'
 import { loadFavorites, saveFavorites } from './utils/favoritesStorage'
 
 function PropertyRoute(props) {
   const { propertyId } = useParams()
-  const property = properties.find((item) => item.id === Number(propertyId))
+  const property = props.properties.find((item) => item.id === Number(propertyId))
   const title = property?.title || 'Propiedad no encontrada'
   const description = property
     ? `${property.type} en ${property.location} por ${formatPrice(property.price, property.operation)}. ${property.bedrooms} dormitorios, ${property.bathrooms} baños y ${property.area} m².`
@@ -27,13 +27,30 @@ function PropertyRoute(props) {
 
 function App() {
   const [favorites, setFavorites] = useState(loadFavorites)
+  const [properties, setProperties] = useState(localProperties)
+  const [catalogStatus, setCatalogStatus] = useState('loading')
+
+  useEffect(() => {
+    let active = true
+    import('./services/propertiesService')
+      .then(({ getProperties }) => getProperties())
+      .then((result) => {
+        if (!active) return
+        setProperties(result.properties)
+        setCatalogStatus(result.source === 'supabase' ? 'remote' : 'local')
+      })
+      .catch(() => {
+        if (active) setCatalogStatus('error')
+      })
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     saveFavorites(favorites)
   }, [favorites])
 
   const toggleFavorite = (propertyId) => setFavorites((current) => current.includes(propertyId) ? current.filter((id) => id !== propertyId) : [...current, propertyId])
-  const sharedProps = { favorites, onFavorite: toggleFavorite }
+  const sharedProps = { favorites, onFavorite: toggleFavorite, properties, catalogStatus }
   return <Routes><Route element={<MainLayout favoriteCount={favorites.length} />}><Route index element={<HomePage {...sharedProps} />} /><Route path="inmuebles" element={<PropertiesPage {...sharedProps} />} /><Route path="inmuebles/:propertyId" element={<PropertyRoute {...sharedProps} />} /><Route path="favoritos" element={<FavoritesPage {...sharedProps} />} /><Route path="contacto" element={<ContactPage />} /><Route path="preguntas-frecuentes" element={<><Seo title="Preguntas frecuentes" description="Resolvemos las dudas habituales sobre visitas, favoritos, compra, alquiler, venta y valoración de propiedades con Lumera." /><FaqPage /></>} /><Route path="privacidad" element={<><Seo title="Política de privacidad" description="Información sobre el tratamiento y la protección de datos personales en Lumera Inmobiliaria." /><PrivacyPage /></>} /><Route path="cookies" element={<><Seo title="Política de cookies" description="Información sobre cookies y almacenamiento local utilizado por Lumera Inmobiliaria." /><CookiesPage /></>} /><Route path="*" element={<><Seo title="Página no encontrada" description="La página solicitada no existe en Lumera Inmobiliaria." noIndex /><NotFoundPage /></>} /></Route></Routes>
 }
 export default App

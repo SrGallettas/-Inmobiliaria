@@ -4,10 +4,10 @@ import PropertyGallery from '../../components/PropertyGallery/PropertyGallery'
 import PropertyFeatures from '../../components/PropertyFeatures/PropertyFeatures'
 import VisitForm from '../../components/VisitForm/VisitForm'
 import RelatedProperties from '../../components/RelatedProperties/RelatedProperties'
-import { properties, formatPrice, getPropertyDetails } from '../../data/properties'
+import { properties as localProperties, formatPrice, getPropertyDetails } from '../../data/properties'
 import '../pages.css'
 
-function PropertyDetailPage({ favorites, onFavorite }) {
+function PropertyDetailPage({ favorites, onFavorite, properties = localProperties }) {
   const { propertyId } = useParams()
   const location = useLocation()
   const property = properties.find((item) => item.id === Number(propertyId))
