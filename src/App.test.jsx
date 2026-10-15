@@ -51,4 +51,26 @@ describe('App', () => {
     renderApp('/ruta-que-no-existe')
     expect(screen.getByRole('heading', { name: /esta dirección/i })).toBeInTheDocument()
   })
+
+  test('permite abrir las preguntas frecuentes desde el pie de página', async () => {
+    const user = userEvent.setup()
+    renderApp('/')
+
+    await user.click(screen.getByRole('link', { name: 'Preguntas frecuentes' }))
+
+    expect(screen.getByRole('heading', { name: /Preguntas\s*frecuentes/i })).toBeInTheDocument()
+    expect(screen.getByText('¿Cómo puedo solicitar una visita?')).toBeInTheDocument()
+  })
+
+  test.each([
+    ['Privacidad', /Política de privacidad/i],
+    ['Cookies', /Política de cookies/i],
+  ])('abre la página de %s desde el pie', async (linkName, heading) => {
+    const user = userEvent.setup()
+    renderApp('/')
+
+    await user.click(screen.getByRole('link', { name: linkName }))
+
+    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument()
+  })
 })

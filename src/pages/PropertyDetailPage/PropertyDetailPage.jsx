@@ -14,9 +14,7 @@ function PropertyDetailPage({ favorites, onFavorite }) {
   const backTo = location.state?.from?.startsWith('/inmuebles') ? location.state.from : '/inmuebles'
 
   useEffect(() => {
-    document.title = property ? `${property.title} — Lumera` : 'Propiedad no encontrada — Lumera'
     window.scrollTo({ top: 0 })
-    return () => { document.title = 'Lumera — Casas con luz, vidas con historia' }
   }, [property])
 
   if (!property) return <section className="not-found page-space"><p className="eyebrow">Propiedad no encontrada</p><h1>Esta vivienda ya no está disponible.</h1><Link to="/inmuebles" className="solid-link">Volver al catálogo</Link></section>

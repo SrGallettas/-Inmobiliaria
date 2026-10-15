@@ -244,9 +244,9 @@
 }
 
 .areas-grid {
-    height: 590px;
+    height: 680px;
     display: grid;
-    grid-template-columns: 1.18fr .82fr;
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 1fr 1fr;
     gap: 20px
 }
@@ -256,10 +256,6 @@
     overflow: hidden;
     color: white;
     text-decoration: none
-}
-
-.area-card-1 {
-    grid-row: 1/span 2
 }
 
 .area-card img {
@@ -403,6 +399,12 @@
 
     .manifesto-content {
         padding: 80px 50px
+    }
+
+    .areas-grid {
+        height: auto;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 300px)
     }
 }
 

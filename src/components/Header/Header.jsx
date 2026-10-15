@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import './Header.css'
 
@@ -6,6 +6,14 @@ function HeartIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path 
 
 function Header({ favoriteCount, overlay }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  return <header className={`main-header ${overlay ? 'header-overlay' : 'header-solid'}`}><Link to="/" className="brand" aria-label="Lumera, inicio"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2 3 10v14l14 8 14-8V10L17 2Z" /><path d="m3 10 14 8 14-8M17 18v14" /></svg><span>LUMERA</span></Link><nav className={menuOpen ? 'nav-open' : ''} aria-label="Navegación principal"><NavLink to="/inmuebles" onClick={() => setMenuOpen(false)}>Comprar</NavLink><NavLink to="/contacto" onClick={() => setMenuOpen(false)}>Vender</NavLink><Link to="/?seccion=zonas" onClick={() => setMenuOpen(false)}>Zonas</Link><Link to="/?seccion=metodo" onClick={() => setMenuOpen(false)}>Nosotros</Link></nav><div className="header-actions"><NavLink className="favorite-button" to="/favoritos" aria-label={`Favoritos: ${favoriteCount} propiedades`}><HeartIcon /><span>Favoritos</span>{favoriteCount > 0 && <b>{favoriteCount}</b>}</NavLink><Link className="contact-button" to="/contacto">Contacto</Link><button className={`menu-button ${menuOpen ? 'is-open' : ''}`} type="button" aria-label="Abrir menú" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button></div></header>
+
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    const closeOnEscape = (event) => { if (event.key === 'Escape') setMenuOpen(false) }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [menuOpen])
+
+  return <header className={`main-header ${overlay ? 'header-overlay' : 'header-solid'}`}><Link to="/" className="brand" aria-label="Lumera, inicio"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2 3 10v14l14 8 14-8V10L17 2Z" /><path d="m3 10 14 8 14-8M17 18v14" /></svg><span>LUMERA</span></Link><nav id="main-navigation" className={menuOpen ? 'nav-open' : ''} aria-label="Navegación principal"><NavLink to="/inmuebles" onClick={() => setMenuOpen(false)}>Comprar</NavLink><NavLink to="/contacto" onClick={() => setMenuOpen(false)}>Vender</NavLink><Link to="/?seccion=zonas" onClick={() => setMenuOpen(false)}>Zonas</Link><Link to="/?seccion=metodo" onClick={() => setMenuOpen(false)}>Nosotros</Link></nav><div className="header-actions"><NavLink className="favorite-button" to="/favoritos" aria-label={`Favoritos: ${favoriteCount} propiedades`}><HeartIcon /><span>Favoritos</span>{favoriteCount > 0 && <b>{favoriteCount}</b>}</NavLink><Link className="contact-button" to="/contacto">Contacto</Link><button className={`menu-button ${menuOpen ? 'is-open' : ''}`} type="button" aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'} aria-controls="main-navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button></div></header>
 }
 export default Header
