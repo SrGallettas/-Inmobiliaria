@@ -37,13 +37,13 @@ const descriptions = {
 
 export function getPropertyDetails(property) {
   return {
-    description: descriptions[property.type] || descriptions.Casa,
-    year: 2021 - (property.id % 7),
-    energyRating: ['A', 'B', 'B', 'C'][property.id % 4],
-    floor: property.type === 'Villa' || property.type.includes('Casa') ? 'Independiente' : `${(property.id % 6) + 1}ª planta`,
-    features: property.type === 'Villa'
+    description: property.description || descriptions[property.type] || descriptions.Casa,
+    year: property.year || 2021 - (property.id % 7),
+    energyRating: property.energyRating || ['A', 'B', 'B', 'C'][property.id % 4],
+    floor: property.floor || (property.type === 'Villa' || property.type.includes('Casa') ? 'Independiente' : `${(property.id % 6) + 1}ª planta`),
+    features: property.features || (property.type === 'Villa'
       ? ['Piscina privada', 'Jardín', 'Terraza', 'Garaje', 'Climatización', 'Vistas abiertas']
-      : ['Luz natural', 'Cocina equipada', 'Climatización', 'Armarios empotrados', 'Ascensor', 'Terraza'],
-    gallery: [property.image, ...galleryImages.filter((image) => image !== property.image).slice(0, 4)],
+      : ['Luz natural', 'Cocina equipada', 'Climatización', 'Armarios empotrados', 'Ascensor', 'Terraza']),
+    gallery: property.gallery || [property.image, ...galleryImages.filter((image) => image !== property.image).slice(0, 4)],
   }
 }

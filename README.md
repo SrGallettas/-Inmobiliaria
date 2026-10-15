@@ -2,7 +2,7 @@
 
 Aplicación inmobiliaria didáctica construida con React. El proyecto sirve para aprender de forma progresiva cómo organizar una interfaz real mediante componentes, rutas, estado, formularios, persistencia local y pruebas automatizadas.
 
-Actualmente es un frontend funcional con datos simulados. Todavía no dispone de usuarios, base de datos ni envío real de formularios.
+Actualmente es un frontend funcional conectado a Supabase para leer el catálogo de propiedades. Mantiene una copia local de respaldo, pero todavía no dispone de usuarios ni envío real de formularios.
 
 ## Funcionalidades actuales
 
@@ -139,7 +139,7 @@ npm run build
 
 ## Pruebas actuales
 
-La aplicación cuenta con 31 casos de prueba que cubren:
+La aplicación cuenta con 45 casos de prueba que cubren:
 
 - Integridad y presentación de los datos inmobiliarios.
 - Filtrado, combinación de criterios y ordenación.
@@ -152,34 +152,39 @@ La aplicación cuenta con 31 casos de prueba que cubren:
 - Galería, teclado y lightbox.
 - Ruta de error 404.
 
-Las siguientes ampliaciones de pruebas serán el buscador de portada, el menú móvil, la ficha completa y pruebas E2E en un navegador real.
+Las siguientes ampliaciones de pruebas serán la ficha completa, la carga remota y pruebas E2E en un navegador real.
 
 ## Limitaciones actuales
 
-- Los datos de propiedades son locales y simulados.
+- El catálogo principal se lee desde Supabase y conserva datos locales como respaldo.
+- Los detalles ampliados están preparados para migrarse a Supabase.
 - Las imágenes proceden principalmente de URLs externas.
 - Los formularios validan y muestran confirmación, pero no envían datos.
 - Los favoritos pertenecen al navegador, no a una cuenta.
-- Los enlaces legales y sociales del pie todavía son provisionales.
+- El enlace de Instagram todavía es provisional.
 - No existe panel de administración.
 - El despliegue público todavía no está configurado.
 
 ## Hoja de ruta
 
-### Siguiente etapa: usuarios y backend
+### Próxima sesión
 
-La opción prevista es utilizar Supabase como servicio de autenticación y base de datos:
+1. Ejecutar `supabase/migrations/20261015153000_add_property_details.sql` en el editor SQL de Supabase.
+2. Comprobar que descripción, características, año, planta, eficiencia energética y galería aparecen en la tabla.
+3. Confirmar que las fichas leen esos detalles desde Supabase.
+4. Crear las tablas `contact_requests` y `visit_requests`.
+5. Conectar los formularios de contacto y visita.
 
-1. Crear y configurar un proyecto de Supabase.
-2. Añadir registro, inicio y cierre de sesión.
-3. Crear una zona personal para cada usuario.
-4. Guardar favoritos en la base de datos.
-5. Migrar los favoritos locales al iniciar sesión.
-6. Enviar y almacenar solicitudes de contacto y visita.
+### Backend y usuarios
+
+1. Añadir registro, inicio y cierre de sesión.
+2. Crear una zona personal para cada usuario.
+3. Guardar favoritos en la base de datos.
+4. Migrar los favoritos locales al iniciar sesión.
+5. Crear un panel de administración para propiedades y solicitudes.
 
 ### Ampliaciones posteriores
 
-- Panel de administración.
 - Gestión y subida de fotografías.
 - Mapas y geolocalización.
 - Recuperación de contraseña.

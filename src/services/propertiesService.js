@@ -17,6 +17,12 @@ function mapProperty(row) {
     featured: row.featured,
     dateAdded: row.date_added,
     image: row.image,
+    description: row.description,
+    year: row.construction_year,
+    energyRating: row.energy_rating,
+    floor: row.floor,
+    features: row.features,
+    gallery: row.gallery,
   }
 }
 
@@ -27,7 +33,7 @@ export async function getProperties(client = supabase) {
 
   const { data, error } = await client
     .from('properties')
-    .select('id, title, location, city, price, bedrooms, bathrooms, area, type, operation, badge, featured, date_added, image')
+    .select('id, title, location, city, price, bedrooms, bathrooms, area, type, operation, badge, featured, date_added, image, description, construction_year, energy_rating, floor, features, gallery')
     .order('date_added', { ascending: false })
 
   if (error) throw new Error(`No se pudieron cargar las propiedades: ${error.message}`)
