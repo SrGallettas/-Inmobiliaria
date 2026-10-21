@@ -8,6 +8,10 @@ function renderPage(path = '/inmuebles') {
   return render(<MemoryRouter initialEntries={[path]}><PropertiesPage favorites={[]} onFavorite={() => {}} /></MemoryRouter>)
 }
 
+function renderPageWithStatus(catalogStatus) {
+  return render(<MemoryRouter><PropertiesPage favorites={[]} onFavorite={() => {}} catalogStatus={catalogStatus} /></MemoryRouter>)
+}
+
 describe('PropertiesPage', () => {
   test('aplica filtros desde los controles del catálogo', async () => {
     const user = userEvent.setup()
@@ -39,5 +43,21 @@ describe('PropertiesPage', () => {
 
     expect(screen.getByRole('heading', { name: 'No hemos encontrado viviendas' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Limpiar filtros' })).toBeInTheDocument()
+  })
+
+  test.each([
+    ['loading', 'Actualizando el catálogo…'],
+    ['local', 'Estás viendo el catálogo de demostración.'],
+    ['error', 'No hemos podido conectar con el catálogo.'],
+  ])('informa al usuario cuando el catálogo está en estado %s', (status, message) => {
+    renderPageWithStatus(status)
+
+    expect(screen.getByRole('status')).toHaveTextContent(message)
+  })
+
+  test('no muestra avisos cuando el catálogo remoto está disponible', () => {
+    renderPageWithStatus('remote')
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 })
