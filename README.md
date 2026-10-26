@@ -2,7 +2,7 @@
 
 Aplicación inmobiliaria didáctica construida con React. El proyecto sirve para aprender de forma progresiva cómo organizar una interfaz real mediante componentes, rutas, estado, formularios, persistencia local y pruebas automatizadas.
 
-Actualmente es un frontend funcional conectado a Supabase para leer el catálogo, enviar formularios y autenticar usuarios. Mantiene una copia local de propiedades como respaldo.
+Actualmente es un frontend funcional conectado a Supabase para leer el catálogo, enviar formularios, autenticar usuarios y gestionar perfiles. Mantiene una copia local de propiedades como respaldo.
 
 ## Funcionalidades actuales
 
@@ -19,6 +19,9 @@ Actualmente es un frontend funcional conectado a Supabase para leer el catálogo
 - Registro, inicio y cierre de sesión con Supabase Auth.
 - Recuperación de contraseña y sesión persistente.
 - Área de cuenta protegida.
+- Perfil editable con nickname único, nombre, teléfono y avatar.
+- Acceso mediante correo electrónico o nickname.
+- Roles protegidos de cliente y agente.
 - Sistema de favoritos persistente en el navegador.
 - Página específica de favoritos.
 - Página de error 404.
@@ -79,15 +82,19 @@ inmobiliaria-react/
 │   │   ├── PropertyFeatures/
 │   │   ├── PropertyGallery/
 │   │   ├── PropertyGrid/
+│   │   ├── ProtectedRoute/
 │   │   ├── RelatedProperties/
 │   │   ├── ScrollManager/
 │   │   ├── SearchPanel/
 │   │   └── VisitForm/
 │   ├── data/                       # Catálogo simulado
+│   ├── auth/                       # Contexto y acceso a la sesión
+│   ├── services/                   # Supabase: propiedades, formularios, auth y perfiles
 │   ├── layouts/                    # Estructura compartida
 │   ├── pages/                      # Páginas asociadas a rutas
 │   │   ├── ContactPage/
 │   │   ├── FavoritesPage/
+│   │   ├── AuthPages/
 │   │   ├── HomePage/
 │   │   ├── NotFoundPage/
 │   │   ├── PropertiesPage/
@@ -97,6 +104,7 @@ inmobiliaria-react/
 │   ├── App.jsx                     # Rutas y estado compartido
 │   └── main.jsx                    # Punto de entrada
 ├── test/                           # Pruebas de lógica con Node
+├── supabase/                       # Migraciones y Edge Functions
 ├── index.html
 ├── package.json
 └── vite.config.js
@@ -142,13 +150,14 @@ npm run build
 
 ## Pruebas actuales
 
-La aplicación cuenta con 59 casos de prueba que cubren:
+La aplicación cuenta con 64 casos de prueba que cubren:
 
 - Integridad y presentación de los datos inmobiliarios.
 - Filtrado, combinación de criterios y ordenación.
 - Conversión de parámetros de URL en filtros.
 - Validación de contacto y solicitud de visita.
 - Validación y servicio de autenticación.
+- Validación y servicio de perfiles y nicknames.
 - Guardado, recuperación y limpieza de favoritos.
 - Flujo de favoritos desde la aplicación completa.
 - Catálogo y controles de filtrado.
@@ -173,15 +182,14 @@ Las siguientes ampliaciones de pruebas serán la ficha completa, la carga remota
 
 ### Próxima sesión
 
-1. Probar registro, confirmación por correo, acceso, cierre y recuperación con el proyecto real de Supabase.
-2. Configurar en Supabase las URL permitidas para desarrollo y producción.
-3. Crear la tabla `profiles` y sus políticas de seguridad.
-4. Asignar los roles iniciales de cliente y agente.
+1. Relacionar cada propiedad con su agente responsable.
+2. Mostrar el agente en la ficha del inmueble.
+3. Preparar el botón `Contactar con el vendedor` para iniciar una conversación.
 
 ### Backend y usuarios
 
-1. Completar los perfiles y roles asociados a las cuentas.
-2. Ampliar la zona personal de cada usuario.
+1. Relacionar propiedades con agentes.
+2. Crear conversaciones y mensajes.
 3. Guardar favoritos en la base de datos.
 4. Migrar los favoritos locales al iniciar sesión.
 5. Crear un panel de administración para propiedades y solicitudes.

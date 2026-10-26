@@ -19,12 +19,12 @@ export async function getSession(client = supabase) {
   return data.session
 }
 
-export async function signUp({ name, email, password }, client = supabase) {
+export async function signUp({ name, username, email, password }, client = supabase) {
   const { data, error } = await requireClient(client).auth.signUp({
     email: email.trim().toLowerCase(),
     password,
     options: {
-      data: { full_name: name.trim() },
+      data: { full_name: name.trim(), username: username.trim().toLowerCase() },
       emailRedirectTo: `${window.location.origin}/entrar?confirmado=1`,
     },
   })
@@ -32,8 +32,22 @@ export async function signUp({ name, email, password }, client = supabase) {
   return data
 }
 
-export async function signIn({ email, password }, client = supabase) {
-  const { data, error } = await requireClient(client).auth.signInWithPassword({ email: email.trim().toLowerCase(), password })
+export async function signIn({ identifier, email, password }, client = supabase) {
+  const value = (identifier || email).trim().toLowerCase()
+  if (value.includes('@')) {
+    const { data, error } = await requireClient(client).auth.signInWithPassword({ email: value, password })
+    if (error) throw error
+    return data
+  }
+  const { data, error } = await requireClient(client).functions.invoke('login-with-username', { body: { username: value, password } })
+  if (error || !data?.session) throw error || new Error('Credenciales incorrectas.')
+  const { data: sessionData, error: sessionError } = await client.auth.setSession({ access_token: data.session.access_token, refresh_token: data.session.refresh_token })
+  if (sessionError) throw sessionError
+  return sessionData
+}
+
+export async function isUsernameAvailable(username, client = supabase) {
+  const { data, error } = await requireClient(client).rpc('username_available', { candidate: username.trim().toLowerCase() })
   if (error) throw error
   return data
 }

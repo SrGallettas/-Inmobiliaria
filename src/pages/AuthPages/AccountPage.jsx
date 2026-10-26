@@ -1,27 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../../auth/useAuth'
 import Seo from '../../components/Seo/Seo'
-import { getAuthErrorMessage } from '../../services/authService'
+import { getAuthErrorMessage, isUsernameAvailable } from '../../services/authService'
+import { getProfile, updateProfile, uploadAvatar } from '../../services/profileService'
+import { validateProfileForm } from '../../utils/formValidation'
 import './AuthPages.css'
+import './AccountPage.css'
+import './ProfileEnhancements.css'
 
-function maskEmail(email) {
-  const [name, domain] = email.split('@')
-  return `${name.slice(0, 2)}${'*'.repeat(Math.max(2, name.length - 2))}@${domain}`
-}
-
+function maskEmail(email) { const [name, domain] = email.split('@'); return `${name.slice(0, 2)}${'*'.repeat(Math.max(2, name.length - 2))}@${domain}` }
 export default function AccountPage() {
   const { user, requestPasswordReset } = useAuth()
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
-  const [error, setError] = useState('')
-  const name = user.user_metadata?.full_name || 'Tu cuenta'
-
-  const sendPasswordEmail = async () => {
-    setSending(true); setError('')
-    try { await requestPasswordReset(user.email); setSent(true) }
-    catch (requestError) { setError(getAuthErrorMessage(requestError, 'No hemos podido enviar el correo. Inténtalo de nuevo en unos minutos.')) }
-    finally { setSending(false) }
-  }
-
-  return <div className="account-page page-space"><Seo title="Mi cuenta" description="Área privada de tu cuenta de Lumera." noIndex /><div className="container account-content"><p className="eyebrow">Área privada</p><h1>Hola, {name}.</h1><p>Tu cuenta ya está conectada. En las próximas fases aparecerán aquí tus favoritos sincronizados, conversaciones y solicitudes de visita.</p><dl><div><dt>Correo</dt><dd>{user.email}</dd></div><div><dt>Estado</dt><dd>Cuenta activa</dd></div></dl><section className="account-security" aria-labelledby="security-title"><h2 id="security-title">Seguridad</h2><p>Enviaremos un enlace de un solo uso al correo de tu cuenta. No necesitas volver a escribirlo.</p>{sent ? <p className="auth-notice" role="status">Correo enviado a {maskEmail(user.email)}. Revisa también la carpeta de spam.</p> : <button className="solid-link" type="button" onClick={sendPasswordEmail} disabled={sending}>{sending ? 'Enviando…' : 'Enviar enlace para cambiar contraseña'}</button>}{error && <p className="submit-error" role="alert">{error}</p>}</section></div></div>
+  const [profile, setProfile] = useState(null); const [form, setForm] = useState({ fullName: '', username: '', phone: '', avatarUrl: '' }); const [profileState, setProfileState] = useState('loading'); const [profileError, setProfileError] = useState(''); const [errors, setErrors] = useState({}); const [sending, setSending] = useState(false); const [sent, setSent] = useState(false); const [emailError, setEmailError] = useState('')
+  useEffect(() => { let active = true; getProfile(user.id).then((value) => { if (active) { setProfile(value); setForm({ fullName: value.fullName, username: value.username, phone: value.phone, avatarUrl: value.avatarUrl }); setProfileState('ready') } }).catch(() => { if (active) { setProfileError('No hemos podido cargar tu perfil. Comprueba que las migraciones están aplicadas.'); setProfileState('error') } }); return () => { active = false } }, [user.id])
+  const saveProfile = async (event) => { event.preventDefault(); const next = validateProfileForm(form); if (Object.keys(next).length) { setErrors(next); return }; setProfileState('saving'); setProfileError(''); try { if (form.username !== profile.username && !await isUsernameAvailable(form.username)) { setErrors({ username: 'Este nickname ya está ocupado.' }); setProfileState('ready'); return }; const saved = await updateProfile(user.id, form); setProfile(saved); setForm({ fullName: saved.fullName, username: saved.username, phone: saved.phone, avatarUrl: saved.avatarUrl }); setProfileState('saved') } catch { setProfileError('No hemos podido guardar los cambios. Inténtalo de nuevo.'); setProfileState('error') } }
+  const changeAvatar = async (event) => { const file = event.target.files?.[0]; if (!file) return; if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) { setProfileError('La foto debe ser JPG, PNG o WebP y pesar menos de 2 MB.'); return }; setProfileState('saving'); setProfileError(''); try { const avatarUrl = await uploadAvatar(user.id, file); const saved = await updateProfile(user.id, { ...form, avatarUrl }); setProfile(saved); setForm({ ...form, avatarUrl }); setProfileState('saved') } catch (uploadError) { setProfileError(uploadError.message || 'No hemos podido subir la foto. Inténtalo de nuevo.'); setProfileState('error') } }
+  const sendPasswordEmail = async () => { setSending(true); setEmailError(''); try { await requestPasswordReset(user.email); setSent(true) } catch (error) { setEmailError(getAuthErrorMessage(error, 'No hemos podido enviar el correo. Inténtalo de nuevo.')) } finally { setSending(false) } }
+  const displayName = profile?.username ? `@${profile.username}` : profile?.fullName || user.user_metadata?.full_name || 'Tu cuenta'
+  return <div className="account-page page-space"><Seo title="Mi cuenta" description="Área privada de tu cuenta de Lumera." noIndex /><div className="container account-content"><div className="account-identity"><div className="avatar-preview">{form.avatarUrl ? <img src={form.avatarUrl} alt="Foto de perfil" /> : <span>{displayName.replace('@', '').slice(0, 1).toUpperCase()}</span>}</div><div><p className="eyebrow">Área privada</p><h1>Hola, {displayName}.</h1><p>Gestiona tu identidad pública, tus datos y la seguridad de tu cuenta.</p></div></div><div className="account-grid"><section className="account-panel"><p className="eyebrow">Perfil</p><h2>Tus datos</h2>{profileState === 'loading' ? <p>Cargando perfil…</p> : profileState === 'error' && !profile ? <p className="submit-error">{profileError}</p> : <form className="profile-form" onSubmit={saveProfile} noValidate><label className="avatar-control">Foto de perfil<input type="file" accept="image/jpeg,image/png,image/webp" onChange={changeAvatar} /><span>Elegir foto · JPG, PNG o WebP · Máximo 2 MB</span></label><label>Nickname</label><div className="username-input"><span>@</span><input value={form.username} onChange={(e) => { setForm({ ...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '') }); setErrors({ ...errors, username: '' }) }} /></div>{errors.username && <span className="field-error">{errors.username}</span>}<label>Nombre completo</label><input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />{errors.fullName && <span className="field-error">{errors.fullName}</span>}<label>Teléfono</label><input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Opcional" />{errors.phone && <span className="field-error">{errors.phone}</span>}<div className="profile-readonly"><span>Correo</span><strong>{user.email}</strong><span>Tipo de cuenta</span><strong>{profile?.role === 'agent' ? 'Agente' : 'Cliente'}</strong></div>{profileError && <p className="submit-error">{profileError}</p>}{profileState === 'saved' && <p className="auth-notice">Perfil guardado correctamente.</p>}<button className="solid-link" disabled={profileState === 'saving'}>{profileState === 'saving' ? 'Guardando…' : 'Actualizar perfil'}</button></form>}</section><section className="account-panel security-panel"><p className="eyebrow">Acceso</p><h2>Contraseña y seguridad</h2><p>Enviaremos un enlace de un solo uso al correo verificado. Desde él podrás crear una contraseña nueva.</p><div className="security-email"><span>Destino</span><strong>{maskEmail(user.email)}</strong></div>{sent ? <p className="auth-notice">Enlace enviado. Revisa también spam.</p> : <button className="solid-link" type="button" onClick={sendPasswordEmail} disabled={sending}>{sending ? 'Enviando enlace…' : 'Actualizar contraseña'}</button>}{emailError && <p className="submit-error">{emailError}</p>}</section></div></div></div>
 }

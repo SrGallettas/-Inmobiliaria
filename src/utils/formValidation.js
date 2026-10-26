@@ -6,10 +6,15 @@ export function validateEmail(email) {
 
 export function validateLoginForm(form) {
   const errors = {}
-  const emailError = validateEmail(form.email)
-  if (emailError) errors.email = emailError
+  if (!form.identifier?.trim() && !form.email?.trim()) errors.identifier = 'Introduce tu correo o nickname.'
   if (!form.password) errors.password = 'Introduce tu contraseña.'
   return errors
+}
+
+export function validateUsername(username) {
+  const value = String(username || '').trim().toLowerCase()
+  if (!/^[a-z0-9._]{3,24}$/.test(value)) return 'Usa entre 3 y 24 caracteres: letras, números, punto o guion bajo.'
+  return ''
 }
 
 export const passwordRequirements = [
@@ -32,6 +37,10 @@ export function validatePassword(password) {
 export function validateRegisterForm(form) {
   const errors = validateLoginForm(form)
   if (form.name.trim().length < 2) errors.name = 'Escribe tu nombre completo.'
+  const usernameError = validateUsername(form.username)
+  if (usernameError) errors.username = usernameError
+  const emailError = validateEmail(form.email)
+  if (emailError) errors.email = emailError
   const passwordError = validatePassword(form.password)
   if (passwordError) errors.password = passwordError
   if (form.passwordConfirmation !== form.password) errors.passwordConfirmation = 'Las contraseñas no coinciden.'
@@ -44,6 +53,15 @@ export function validateNewPassword(form) {
   if (passwordError) return passwordError
   if (form.password !== form.passwordConfirmation) return 'Las contraseñas no coinciden.'
   return ''
+}
+
+export function validateProfileForm(form) {
+  const errors = {}
+  if (form.fullName.trim().length < 2) errors.fullName = 'Escribe tu nombre completo.'
+  const usernameError = validateUsername(form.username)
+  if (usernameError) errors.username = usernameError
+  if (form.phone && form.phone.replace(/\D/g, '').length < 9) errors.phone = 'Introduce un teléfono válido o déjalo vacío.'
+  return errors
 }
 
 export function validateContactForm(form) {
