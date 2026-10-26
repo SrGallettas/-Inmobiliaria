@@ -11,6 +11,12 @@ import FaqPage from './pages/FaqPage/FaqPage'
 import PrivacyPage from './pages/PrivacyPage/PrivacyPage'
 import CookiesPage from './pages/CookiesPage/CookiesPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
+import LoginPage from './pages/AuthPages/LoginPage'
+import RegisterPage from './pages/AuthPages/RegisterPage'
+import ForgotPasswordPage from './pages/AuthPages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/AuthPages/ResetPasswordPage'
+import AccountPage from './pages/AuthPages/AccountPage'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import { formatPrice, properties as localProperties } from './data/properties'
 import { loadFavorites, saveFavorites } from './utils/favoritesStorage'
 
@@ -51,6 +57,6 @@ function App() {
 
   const toggleFavorite = (propertyId) => setFavorites((current) => current.includes(propertyId) ? current.filter((id) => id !== propertyId) : [...current, propertyId])
   const sharedProps = { favorites, onFavorite: toggleFavorite, properties, catalogStatus }
-  return <Routes><Route element={<MainLayout favoriteCount={favorites.length} />}><Route index element={<HomePage {...sharedProps} />} /><Route path="inmuebles" element={<PropertiesPage {...sharedProps} />} /><Route path="inmuebles/:propertyId" element={<PropertyRoute {...sharedProps} />} /><Route path="favoritos" element={<FavoritesPage {...sharedProps} />} /><Route path="contacto" element={<ContactPage />} /><Route path="preguntas-frecuentes" element={<><Seo title="Preguntas frecuentes" description="Resolvemos las dudas habituales sobre visitas, favoritos, compra, alquiler, venta y valoración de propiedades con Lumera." /><FaqPage /></>} /><Route path="privacidad" element={<><Seo title="Política de privacidad" description="Información sobre el tratamiento y la protección de datos personales en Lumera Inmobiliaria." /><PrivacyPage /></>} /><Route path="cookies" element={<><Seo title="Política de cookies" description="Información sobre cookies y almacenamiento local utilizado por Lumera Inmobiliaria." /><CookiesPage /></>} /><Route path="*" element={<><Seo title="Página no encontrada" description="La página solicitada no existe en Lumera Inmobiliaria." noIndex /><NotFoundPage /></>} /></Route></Routes>
+  return <Routes><Route element={<MainLayout favoriteCount={favorites.length} />}><Route index element={<HomePage {...sharedProps} />} /><Route path="inmuebles" element={<PropertiesPage {...sharedProps} />} /><Route path="inmuebles/:propertyId" element={<PropertyRoute {...sharedProps} />} /><Route path="favoritos" element={<FavoritesPage {...sharedProps} />} /><Route path="contacto" element={<ContactPage />} /><Route path="entrar" element={<LoginPage />} /><Route path="registro" element={<RegisterPage />} /><Route path="recuperar-contrasena" element={<ForgotPasswordPage />} /><Route path="restablecer-contrasena" element={<ResetPasswordPage />} /><Route path="mi-cuenta" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} /><Route path="preguntas-frecuentes" element={<><Seo title="Preguntas frecuentes" description="Resolvemos las dudas habituales sobre visitas, favoritos, compra, alquiler, venta y valoración de propiedades con Lumera." /><FaqPage /></>} /><Route path="privacidad" element={<><Seo title="Política de privacidad" description="Información sobre el tratamiento y la protección de datos personales en Lumera Inmobiliaria." /><PrivacyPage /></>} /><Route path="cookies" element={<><Seo title="Política de cookies" description="Información sobre cookies y almacenamiento local utilizado por Lumera Inmobiliaria." /><CookiesPage /></>} /><Route path="*" element={<><Seo title="Página no encontrada" description="La página solicitada no existe en Lumera Inmobiliaria." noIndex /><NotFoundPage /></>} /></Route></Routes>
 }
 export default App

@@ -3,9 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { MemoryRouter } from 'react-router'
 import App from './App'
+import { AuthProvider } from './auth/AuthContext'
+
+const authService = { getSession: async () => null, subscribeToAuthChanges: () => () => {}, signUp: async () => {}, signIn: async () => {}, signOut: async () => {}, requestPasswordReset: async () => {}, updatePassword: async () => {} }
 
 function renderApp(path = '/') {
-  return render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
+  return render(<MemoryRouter initialEntries={[path]}><AuthProvider service={authService}><App /></AuthProvider></MemoryRouter>)
 }
 
 describe('App', () => {

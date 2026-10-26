@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
 import { MemoryRouter, useLocation } from 'react-router'
 import Header from './Header'
+import { AuthProvider } from '../../auth/AuthContext'
+
+const authService = { getSession: async () => null, subscribeToAuthChanges: () => () => {}, signUp: async () => {}, signIn: async () => {}, signOut: async () => {}, requestPasswordReset: async () => {}, updatePassword: async () => {} }
 
 function LocationProbe() {
   const location = useLocation()
@@ -10,7 +13,7 @@ function LocationProbe() {
 }
 
 function renderHeader() {
-  return render(<MemoryRouter><Header favoriteCount={2} /><LocationProbe /></MemoryRouter>)
+  return render(<MemoryRouter><AuthProvider service={authService}><Header favoriteCount={2} /><LocationProbe /></AuthProvider></MemoryRouter>)
 }
 
 describe('Header', () => {

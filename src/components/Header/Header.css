@@ -99,6 +99,7 @@
     text-decoration: none;
     text-transform: uppercase
 }
+.account-link,.session-button{color:inherit;background:transparent;border:0;font-size:11px;text-decoration:none;cursor:pointer;white-space:nowrap}.session-button{padding:0}
 
 .menu-button {
     display: none;
@@ -157,6 +158,8 @@
     }
 
     .contact-button,
+    .account-link,
+    .session-button,
     .favorite-button span {
         display: none
     }

@@ -2,7 +2,7 @@
 
 Aplicación inmobiliaria didáctica construida con React. El proyecto sirve para aprender de forma progresiva cómo organizar una interfaz real mediante componentes, rutas, estado, formularios, persistencia local y pruebas automatizadas.
 
-Actualmente es un frontend funcional conectado a Supabase para leer el catálogo de propiedades. Mantiene una copia local de respaldo, pero todavía no dispone de usuarios ni envío real de formularios.
+Actualmente es un frontend funcional conectado a Supabase para leer el catálogo, enviar formularios y autenticar usuarios. Mantiene una copia local de propiedades como respaldo.
 
 ## Funcionalidades actuales
 
@@ -16,6 +16,9 @@ Actualmente es un frontend funcional conectado a Supabase para leer el catálogo
 - Propiedades relacionadas.
 - Formulario de solicitud de visita con validación.
 - Formulario de contacto con validación.
+- Registro, inicio y cierre de sesión con Supabase Auth.
+- Recuperación de contraseña y sesión persistente.
+- Área de cuenta protegida.
 - Sistema de favoritos persistente en el navegador.
 - Página específica de favoritos.
 - Página de error 404.
@@ -139,12 +142,13 @@ npm run build
 
 ## Pruebas actuales
 
-La aplicación cuenta con 45 casos de prueba que cubren:
+La aplicación cuenta con 59 casos de prueba que cubren:
 
 - Integridad y presentación de los datos inmobiliarios.
 - Filtrado, combinación de criterios y ordenación.
 - Conversión de parámetros de URL en filtros.
 - Validación de contacto y solicitud de visita.
+- Validación y servicio de autenticación.
 - Guardado, recuperación y limpieza de favoritos.
 - Flujo de favoritos desde la aplicación completa.
 - Catálogo y controles de filtrado.
@@ -157,9 +161,9 @@ Las siguientes ampliaciones de pruebas serán la ficha completa, la carga remota
 ## Limitaciones actuales
 
 - El catálogo principal se lee desde Supabase y conserva datos locales como respaldo.
-- Los detalles ampliados están preparados para migrarse a Supabase.
+- Los detalles ampliados se leen desde Supabase cuando las migraciones están aplicadas.
 - Las imágenes proceden principalmente de URLs externas.
-- Los formularios validan y muestran confirmación, pero no envían datos.
+- Los formularios necesitan las tablas y políticas de las migraciones para enviar datos.
 - Los favoritos pertenecen al navegador, no a una cuenta.
 - El enlace de Instagram todavía es provisional.
 - No existe panel de administración.
@@ -169,16 +173,15 @@ Las siguientes ampliaciones de pruebas serán la ficha completa, la carga remota
 
 ### Próxima sesión
 
-1. Ejecutar `supabase/migrations/20261015153000_add_property_details.sql` en el editor SQL de Supabase.
-2. Comprobar que descripción, características, año, planta, eficiencia energética y galería aparecen en la tabla.
-3. Confirmar que las fichas leen esos detalles desde Supabase.
-4. Crear las tablas `contact_requests` y `visit_requests`.
-5. Conectar los formularios de contacto y visita.
+1. Probar registro, confirmación por correo, acceso, cierre y recuperación con el proyecto real de Supabase.
+2. Configurar en Supabase las URL permitidas para desarrollo y producción.
+3. Crear la tabla `profiles` y sus políticas de seguridad.
+4. Asignar los roles iniciales de cliente y agente.
 
 ### Backend y usuarios
 
-1. Añadir registro, inicio y cierre de sesión.
-2. Crear una zona personal para cada usuario.
+1. Completar los perfiles y roles asociados a las cuentas.
+2. Ampliar la zona personal de cada usuario.
 3. Guardar favoritos en la base de datos.
 4. Migrar los favoritos locales al iniciar sesión.
 5. Crear un panel de administración para propiedades y solicitudes.
@@ -187,7 +190,6 @@ Las siguientes ampliaciones de pruebas serán la ficha completa, la carga remota
 
 - Gestión y subida de fotografías.
 - Mapas y geolocalización.
-- Recuperación de contraseña.
 - SEO y metadatos por inmueble.
 - Optimización de imágenes.
 - Pruebas E2E.

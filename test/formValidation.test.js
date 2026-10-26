@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { validateContactForm, validateVisitForm } from '../src/utils/formValidation.js'
+import { validateContactForm, validateLoginForm, validateNewPassword, validatePassword, validateRegisterForm, validateVisitForm } from '../src/utils/formValidation.js'
 
 test('acepta un formulario de contacto válido', () => {
   const errors = validateContactForm({ name: 'Paula', email: 'paula@example.com', message: 'Quiero recibir información sobre una vivienda.' })
@@ -25,4 +25,25 @@ test('rechaza una fecha de visita pasada', () => {
 test('acepta teléfonos con espacios y prefijo internacional', () => {
   const errors = validateVisitForm({ name: 'Ana López', email: 'ana@example.com', phone: '+34 600 123 456', date: '2026-10-15' }, '2026-10-14')
   assert.equal(errors.phone, undefined)
+})
+
+test('valida el registro y la confirmación de contraseña', () => {
+  assert.deepEqual(validateRegisterForm({ name: 'Ana López', email: 'ana@example.com', password: 'Segura.12345', passwordConfirmation: 'Segura.12345', privacy: true }), {})
+  const errors = validateRegisterForm({ name: '', email: 'mal', password: '123', passwordConfirmation: '456', privacy: false })
+  assert.ok(errors.name && errors.email && errors.password && errors.passwordConfirmation && errors.privacy)
+})
+
+test('valida el inicio y el cambio de contraseña', () => {
+  assert.deepEqual(validateLoginForm({ email: 'ana@example.com', password: 'segura123' }), {})
+  assert.equal(validateNewPassword({ password: 'Segura.12345', passwordConfirmation: 'Segura.12345' }), '')
+  assert.ok(validateNewPassword({ password: '123', passwordConfirmation: '456' }))
+})
+
+test('exige longitud, mayúscula, minúscula, número y símbolo', () => {
+  assert.match(validatePassword('Aa1!'), /12/)
+  assert.match(validatePassword('minuscula.123'), /mayúscula/)
+  assert.match(validatePassword('MAYUSCULA.123'), /minúscula/)
+  assert.match(validatePassword('SinNumero.abc'), /número/)
+  assert.match(validatePassword('SinSimbolo123A'), /símbolo/)
+  assert.equal(validatePassword('CasaSegura.123'), '')
 })
