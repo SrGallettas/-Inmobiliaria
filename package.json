@@ -12,6 +12,7 @@
     "test:components": "vitest run",
     "test:db": "supabase test db",
     "test:e2e": "playwright test",
+    "test:e2e:chat": "node scripts/run-chat-e2e.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:watch": "vitest",
     "preview": "vite preview"

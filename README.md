@@ -247,6 +247,7 @@ npm run test:logic       # Pruebas independientes
 npm run test:components  # Pruebas React y servicios
 npm run test:db          # Seguridad y funciones SQL (requiere Supabase local)
 npm run test:e2e         # Recorridos reales en Chrome con Playwright
+npm run test:e2e:chat    # Acceso, mensaje y adjunto contra Supabase local
 npm run test:watch       # Vitest en modo observación
 npm run build            # Build de producción
 npm run preview          # Vista previa del build
@@ -262,6 +263,8 @@ npm run build
 ```
 
 Las pruebas E2E arrancan Vite en modo `e2e`, fuerzan el catálogo local y no utilizan las credenciales de `.env.local`. Playwright dirige el Chrome instalado para comprobar filtros, detalle, favoritos persistentes, rutas protegidas, validación de acceso, páginas legales y 404 en escritorio y móvil.
+
+`npm run test:e2e:chat` crea una pila local aislada llamada `e2e-chat`, genera usuarios temporales, inicia sesión desde Chrome, abre una conversación, envía texto, sube una imagen privada, verifica ambos registros en la base de datos y apaga la pila al terminar. Nunca utiliza las credenciales del Supabase alojado.
 
 Las pruebas de base de datos utilizan pgTAP y se ejecutan contra un Supabase local aislado:
 
@@ -305,23 +308,23 @@ where id = 1;
 - No existe gestión visual de propiedades; los estados se cambian mediante SQL.
 - No existe todavía el formulario para solicitar la publicación o venta de una vivienda.
 - No hay notificaciones por correo o push para mensajes nuevos.
-- Falta ejecutar E2E de autenticación y chat contra un Supabase local o de pruebas.
+- El acceso, la creación de conversación, el envío de texto y la subida de una imagen ya tienen E2E contra Supabase local; faltan registro por correo, vídeo y reconexión.
 - El despliegue público definitivo aún no está configurado.
 - Las imágenes del catálogo siguen procediendo principalmente de URLs externas.
 - El enlace de Instagram es provisional.
 
 ## Próxima etapa recomendada
 
-### Integración E2E con Supabase y preparación de despliegue
+### Ampliación E2E, integración continua y preparación de despliegue
 
-Los recorridos públicos ya se ejecutan en Chrome. El siguiente paso es preparar un Supabase aislado para comprobar:
+Los recorridos públicos y el flujo principal del chat ya se ejecutan en Chrome para escritorio y móvil. Los siguientes pasos son:
 
-1. Registro, confirmación y acceso reales.
-2. Creación y continuidad de una conversación.
-3. Adjuntos privados y políticas RLS.
-4. Venta, cierre y reapertura mediante cambios de base de datos.
-5. Recuperación ante desconexiones.
-6. Ejecución de E2E y pruebas SQL en CI.
+1. Registro y confirmación mediante el correo local de pruebas.
+2. Subida de vídeo además de imagen.
+3. Cierre y reapertura vistos desde el navegador.
+4. Recuperación visual ante desconexiones.
+5. Ejecución de E2E y pruebas SQL en CI.
+6. Configuración del despliegue cuando se decida el proveedor.
 
 Después: favoritos por cuenta, solicitud de publicación, notificaciones, optimización de imágenes y mapas. El panel interno se retomará solo cuando forme parte del alcance deseado.
 
