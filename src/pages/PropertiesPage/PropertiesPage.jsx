@@ -4,6 +4,7 @@ import PropertyGrid from '../../components/PropertyGrid/PropertyGrid'
 import Seo from '../../components/Seo/Seo'
 import { properties as localProperties } from '../../data/properties'
 import { filterProperties, paramsToFilters } from '../../utils/propertyFilters'
+import { isMarketedProperty } from '../../utils/propertyAvailability'
 import '../pages.css'
 
 function CatalogStatus({ status }) {
@@ -21,7 +22,7 @@ function CatalogStatus({ status }) {
 function PropertiesPage({ favorites, onFavorite, properties = localProperties, catalogStatus }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = paramsToFilters(searchParams)
-  const visibleProperties = filterProperties(properties, filters)
+  const visibleProperties = filterProperties(properties.filter(isMarketedProperty), filters)
 
   const updateFilter = (name, value) => {
     const nextParams = new URLSearchParams(searchParams)

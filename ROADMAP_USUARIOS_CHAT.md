@@ -2,12 +2,12 @@
 
 ## Objetivo
 
-Transformar Lumera en una aplicación donde una persona interesada pueda contactar directamente con el vendedor o agente responsable de una propiedad.
+Transformar Lumera en una aplicación donde cualquier cliente pueda comprar, alquilar o vender y contactar con Lumera desde una conversación asociada a una propiedad.
 
 En cada ficha aparecerá el botón:
 
 ```text
-Contactar con el vendedor
+Contactar sobre esta propiedad
 ```
 
 Al pulsarlo:
@@ -25,9 +25,9 @@ Hola, me interesa esta propiedad. ¿Sigue disponible?
 
 El placeholder solo sirve como orientación: no se guarda ni se envía.
 
-## Roles iniciales
+## Usuarios de la primera versión
 
-En la primera versión tendremos dos tipos de usuario.
+En la primera versión habrá un único tipo de cuenta visible: el cliente. Una misma persona puede comprar, alquilar y vender, por lo que esas acciones no se modelarán como roles.
 
 ### Cliente
 
@@ -36,22 +36,12 @@ Podrá:
 - Crear una cuenta.
 - Iniciar y cerrar sesión.
 - Recuperar su contraseña.
-- Contactar con el vendedor.
+- Contactar con Lumera sobre una propiedad.
 - Consultar sus conversaciones.
 - Enviar y recibir mensajes.
 - Guardar favoritos asociados a su cuenta.
 
-### Agente
-
-Podrá:
-
-- Iniciar sesión.
-- Consultar conversaciones relacionadas con sus propiedades.
-- Responder a clientes.
-- Ver qué propiedad originó cada conversación.
-- Marcar conversaciones como abiertas o cerradas.
-
-Más adelante se podría añadir un tercer rol: `administrador`.
+La atención por parte de empleados y la administración se incorporarán más adelante. El campo `role` se conserva internamente para esa ampliación, pero no condicionará las acciones de comprar, alquilar o vender.
 
 ## Fase 1: autenticación de usuarios
 
@@ -110,11 +100,11 @@ No pediremos teléfono ni fotografía durante el registro. Se podrán completar 
 - Puede solicitar recuperación de contraseña.
 - Las pruebas y el build funcionan.
 
-## Fase 2: perfiles y roles
+## Fase 2: perfiles
 
 ### Objetivo
 
-Guardar información adicional de cada usuario y distinguir entre clientes y agentes.
+Guardar información adicional de cada cliente. Comprar, alquilar y vender son acciones de una misma cuenta, no roles distintos.
 
 ### Tabla `profiles`
 
@@ -131,17 +121,12 @@ profiles
 
 El campo `id` estará relacionado con el usuario de Supabase Auth.
 
-Roles permitidos:
-
-```text
-client
-agent
-```
+El campo técnico `role` queda reservado para una futura zona de administración, pero todas las cuentas creadas desde la web son clientes.
 
 ### Seguridad
 
 - Cada usuario podrá consultar y actualizar su propio perfil.
-- Un cliente no podrá convertirse a sí mismo en agente.
+- El usuario no podrá modificar su campo técnico `role`.
 - El rol deberá controlarse desde la base de datos.
 - No se guardarán contraseñas en `profiles`.
 
@@ -159,56 +144,31 @@ agent
 - El rol no puede modificarse desde el navegador.
 - Ningún usuario puede editar perfiles ajenos.
 
-## Fase 3: relacionar propiedades con agentes
+## Fase 3: preparar la experiencia del cliente
 
 ### Objetivo
 
-Saber quién debe recibir los mensajes de cada propiedad.
-
-Añadiremos a `properties`:
-
-```text
-agent_id
-```
-
-Este campo apuntará al perfil del agente responsable.
+Consolidar la zona personal y preparar el inicio de conversaciones desde una propiedad, sin asignar agentes en esta fase.
 
 ### Interfaz
 
-En la ficha aparecerá una sección como:
+En la ficha aparecerá una acción como:
 
 ```text
-Gestionado por
-
-Laura Martínez
-Agente inmobiliaria
-
-[Contactar con el vendedor]
+[Contactar sobre esta propiedad]
 ```
-
-Aunque internamente utilicemos el rol `agent`, mantendremos el texto comercial solicitado:
-
-```text
-Contactar con el vendedor
-```
-
-### Seguridad
-
-- Los visitantes pueden ver la información pública básica del agente.
-- Los datos privados del agente no se expondrán.
-- Una propiedad solo podrá asignarse a un usuario con rol de agente.
 
 ### Criterios para completar la fase
 
-- Cada propiedad tiene un agente responsable.
-- La ficha muestra su información pública.
-- El botón de contacto conoce quién debe recibir la conversación.
+- Cualquier cuenta puede comprar, alquilar o vender.
+- El botón de contacto conserva la propiedad de origen.
+- Un visitante sin sesión vuelve a la propiedad después de entrar.
 
 ## Fase 4: crear conversaciones
 
 ### Objetivo
 
-Abrir una conversación privada entre un cliente y el agente de una propiedad.
+Abrir una conversación privada entre un cliente y Lumera sobre una propiedad.
 
 ### Tabla `conversations`
 
@@ -216,8 +176,10 @@ Abrir una conversación privada entre un cliente y el agente de una propiedad.
 conversations
 ├── id
 ├── property_id
-├── client_id
-├── agent_id
+├── user_id
+├── property_title (copia de seguridad)
+├── property_image (copia de seguridad)
+├── property_status
 ├── status
 ├── created_at
 └── updated_at
@@ -241,12 +203,12 @@ Al pulsar `Contactar con el vendedor`:
 5. Si ya existe, se abre.
 6. Si no existe, se crea una nueva.
 
-Evitaremos crear varias conversaciones iguales entre el mismo cliente, agente y propiedad.
+Evitaremos crear varias conversaciones iguales entre el mismo cliente y la misma propiedad.
 
 ### Criterios para completar la fase
 
 - Solo los usuarios autenticados pueden crear conversaciones.
-- Una conversación siempre tiene propiedad, cliente y agente.
+- Una conversación siempre pertenece al cliente que la inició y conserva los datos básicos de la propiedad.
 - No se crean conversaciones duplicadas.
 - Un usuario no puede abrir conversaciones en nombre de otra persona.
 
@@ -273,7 +235,7 @@ messages
 La pantalla mostrará:
 
 - Fotografía y título de la propiedad.
-- Nombre del vendedor o agente.
+- Identidad de Lumera como interlocutor.
 - Historial de mensajes.
 - Hora de cada mensaje.
 - Campo para escribir.
@@ -298,15 +260,7 @@ El campo estará inicialmente vacío. El mensaje de ejemplo no se enviará hasta
 
 ### Seguridad RLS
 
-Solo podrán leer una conversación:
-
-- El cliente participante.
-- El agente participante.
-
-Solo podrán escribir mensajes:
-
-- El cliente participante.
-- El agente participante.
+En esta primera etapa, solo el cliente propietario de la conversación puede leerla y escribir desde la web pública. La futura interfaz interna de Lumera tendrá sus propias políticas de acceso.
 
 Además:
 
@@ -316,7 +270,7 @@ Además:
 
 ### Criterios para completar la fase
 
-- Cliente y agente pueden enviarse mensajes.
+- El cliente puede enviar mensajes y el historial queda preparado para recibir respuestas de Lumera.
 - Los mensajes persisten después de recargar.
 - Los mensajes aparecen en orden.
 - No se pueden leer conversaciones ajenas.
@@ -350,7 +304,7 @@ El otro participante lo ve
 
 ### Criterios para completar la fase
 
-- Dos sesiones diferentes pueden conversar.
+- La conversación y la bandeja reaccionan a cambios realizados desde otra sesión autorizada.
 - Los mensajes aparecen sin recargar.
 - El contador se actualiza correctamente.
 - Las suscripciones se cierran al abandonar el chat.
@@ -365,21 +319,13 @@ Cada conversación mostrará:
 
 - Fotografía de la propiedad.
 - Nombre de la propiedad.
-- Nombre del otro participante.
+- Estado de la propiedad.
 - Último mensaje.
 - Fecha de última actividad.
 - Número de mensajes sin leer.
 - Estado de la conversación.
 
-### Vistas
-
-#### Cliente
-
-Verá todas las propiedades sobre las que ha preguntado.
-
-#### Agente
-
-Verá todas las conversaciones recibidas sobre las propiedades que gestiona.
+El cliente verá todas las propiedades sobre las que ha preguntado. La bandeja interna del equipo de Lumera se construirá en una etapa posterior.
 
 ### Criterios para completar la fase
 
@@ -400,7 +346,7 @@ El cliente podrá proponer:
 - Franja horaria.
 - Mensaje adicional.
 
-El agente podrá:
+El equipo de Lumera podrá, cuando exista su interfaz interna:
 
 - Aceptar.
 - Proponer otra fecha.
@@ -462,15 +408,14 @@ Una vez terminado el sistema básico podremos valorar:
 - Notificaciones por correo.
 - Notificaciones push.
 - Indicador «está escribiendo».
-- Archivos adjuntos.
-- Fotografías dentro del chat.
+- Vista previa y compresión de archivos adjuntos.
 - Bloqueo y denuncia de usuarios.
 - Archivado de conversaciones.
-- Notas privadas para agentes.
+- Notas privadas para administración.
 - Panel de administración.
 - Estadísticas de interés por propiedad.
 - Eliminación o anonimización de conversaciones.
-- Propietarios particulares además de agentes.
+- Publicación directa por propietarios particulares.
 
 ## Principios de desarrollo
 

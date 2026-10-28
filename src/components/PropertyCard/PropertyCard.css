@@ -42,6 +42,16 @@
     text-transform: uppercase
 }
 
+.property-status-sold,
+.property-status-removed {
+    color: white;
+    background: rgba(49, 55, 52, .9)
+}
+
+.property-status-reserved {
+    background: #f1e2bc
+}
+
 .property-type {
     top: auto;
     bottom: 18px;

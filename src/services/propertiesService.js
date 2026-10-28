@@ -23,6 +23,7 @@ function mapProperty(row) {
     floor: row.floor,
     features: row.features,
     gallery: row.gallery,
+    listingStatus: row.listing_status || 'available',
   }
 }
 
@@ -33,9 +34,15 @@ export async function getProperties(client = supabase) {
 
   const { data, error } = await client
     .from('properties')
-    .select('id, title, location, city, price, bedrooms, bathrooms, area, type, operation, badge, featured, date_added, image, description, construction_year, energy_rating, floor, features, gallery')
+    .select('id, title, location, city, price, bedrooms, bathrooms, area, type, operation, badge, featured, date_added, image, description, construction_year, energy_rating, floor, features, gallery, listing_status')
     .order('date_added', { ascending: false })
 
   if (error) throw new Error(`No se pudieron cargar las propiedades: ${error.message}`)
   return { properties: data.map(mapProperty), source: 'supabase' }
+}
+
+export function subscribeToProperties(onChange, client = supabase) {
+  if (!client) return () => {}
+  const channel = client.channel('public-properties').on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, onChange).subscribe()
+  return () => client.removeChannel(channel)
 }
