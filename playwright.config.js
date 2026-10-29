@@ -18,7 +18,7 @@ export default defineConfig({
     { name: 'mobile-chrome', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
   webServer: {
-    command: 'npm run dev -- --mode e2e --host 127.0.0.1 --port 4173',
+    command: 'npm run dev -- --mode playwright --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

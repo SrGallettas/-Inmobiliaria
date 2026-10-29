@@ -34,7 +34,7 @@ describe('PropertiesPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Limpiar todo' }))
 
-    expect(screen.getByText('propiedades encontradas').closest('p')).toHaveTextContent('9 propiedades encontradas')
+    expect(screen.getByText('propiedades encontradas').closest('p')).toHaveTextContent('11 propiedades encontradas')
     expect(screen.getByRole('heading', { name: 'Villa Serena' })).toBeInTheDocument()
   })
 

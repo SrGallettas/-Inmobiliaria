@@ -6,7 +6,9 @@ export function filterProperties(properties, filters) {
     const matchesMinPrice = !filters.minPrice || property.price >= Number(filters.minPrice)
     const matchesMaxPrice = !filters.maxPrice || property.price <= Number(filters.maxPrice)
     const matchesBedrooms = !filters.bedrooms || property.bedrooms >= Number(filters.bedrooms)
-    return matchesOperation && matchesLocation && matchesType && matchesMinPrice && matchesMaxPrice && matchesBedrooms
+    const matchesBathrooms = !filters.bathrooms || property.bathrooms >= Number(filters.bathrooms)
+    const matchesArea = !filters.minArea || property.area >= Number(filters.minArea)
+    return matchesOperation && matchesLocation && matchesType && matchesMinPrice && matchesMaxPrice && matchesBedrooms && matchesBathrooms && matchesArea
   })
 
   return [...filtered].sort((a, b) => {
@@ -24,6 +26,8 @@ export function paramsToFilters(searchParams) {
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
     bedrooms: searchParams.get('bedrooms') || '',
+    bathrooms: searchParams.get('bathrooms') || '',
+    minArea: searchParams.get('minArea') || '',
     sort: searchParams.get('sort') || 'newest',
   }
 }

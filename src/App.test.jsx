@@ -18,7 +18,7 @@ describe('App', () => {
     const user = userEvent.setup()
     renderApp('/inmuebles')
 
-    await user.click(screen.getByRole('button', { name: 'Añadir Villa Serena a favoritos' }))
+    await user.click(await screen.findByRole('button', { name: 'Añadir Villa Serena a favoritos' }))
 
     const favoritesLink = screen.getByRole('link', { name: 'Favoritos: 1 propiedades' })
     expect(favoritesLink).toBeInTheDocument()
@@ -26,16 +26,16 @@ describe('App', () => {
 
     await user.click(favoritesLink)
 
-    expect(screen.getByRole('heading', { name: /Casas que merece la pena/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Casas que merece la pena/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Villa Serena' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Quitar Villa Serena de favoritos' })).toBeInTheDocument()
   })
 
-  test('recupera los favoritos guardados al iniciar la aplicación', () => {
+  test('recupera los favoritos guardados al iniciar la aplicación', async () => {
     localStorage.setItem('lumera:favorites', '[2]')
     renderApp('/favoritos')
 
-    expect(screen.getByRole('heading', { name: 'Ático Velázquez' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Ático Velázquez' })).toBeInTheDocument()
     expect(screen.getByText('propiedad guardada').closest('p')).toHaveTextContent('1 propiedad guardada')
   })
 
@@ -44,15 +44,15 @@ describe('App', () => {
     localStorage.setItem('lumera:favorites', '[2]')
     renderApp('/favoritos')
 
-    await user.click(screen.getByRole('button', { name: 'Quitar Ático Velázquez de favoritos' }))
+    await user.click(await screen.findByRole('button', { name: 'Quitar Ático Velázquez de favoritos' }))
 
     expect(screen.getByRole('heading', { name: 'Todavía no has guardado ninguna casa' })).toBeInTheDocument()
     await waitFor(() => expect(localStorage.getItem('lumera:favorites')).toBe('[]'))
   })
 
-  test('muestra la página 404 para una ruta desconocida', () => {
+  test('muestra la página 404 para una ruta desconocida', async () => {
     renderApp('/ruta-que-no-existe')
-    expect(screen.getByRole('heading', { name: /esta dirección/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /esta dirección/i })).toBeInTheDocument()
   })
 
   test('permite abrir las preguntas frecuentes desde el pie de página', async () => {
@@ -61,7 +61,7 @@ describe('App', () => {
 
     await user.click(screen.getByRole('link', { name: 'Preguntas frecuentes' }))
 
-    expect(screen.getByRole('heading', { name: /Preguntas\s*frecuentes/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Preguntas\s*frecuentes/i })).toBeInTheDocument()
     expect(screen.getByText('¿Cómo puedo solicitar una visita?')).toBeInTheDocument()
   })
 
@@ -74,6 +74,6 @@ describe('App', () => {
 
     await user.click(screen.getByRole('link', { name: linkName }))
 
-    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument()
   })
 })

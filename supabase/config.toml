@@ -1,5 +1,10 @@
 [functions.login-with-username]
 verify_jwt = false
 
+[functions.assistant-search]
+# El catálogo y el asistente son públicos. Antes de producción se añadirá
+# limitación de solicitudes para proteger el coste de la API de IA.
+verify_jwt = false
+
 [experimental]
 stack = true

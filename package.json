@@ -12,6 +12,8 @@
     "test:components": "vitest run",
     "test:db": "supabase test db",
     "test:e2e": "playwright test",
+    "test:e2e:assistant": "playwright test e2e/assistant-flow.spec.js --grep-invert reales",
+    "test:e2e:assistant:live": "playwright test e2e/assistant-flow.spec.js --grep reales",
     "test:e2e:chat": "node scripts/run-chat-e2e.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:watch": "vitest",
