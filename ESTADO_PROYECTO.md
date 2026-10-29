@@ -104,10 +104,21 @@ Antes de cambiar el proveedor se debe:
 
 ## Catálogo y filtros
 
-- El catálogo contiene 16 propiedades locales y remotas.
+- El catálogo remoto contiene 40 propiedades: 16 iniciales y 24 viviendas adicionales de demostración.
 - Se añadieron propiedades de Sevilla, Bilbao y Granada.
 - Los filtros visibles permiten operación, ubicación, tipo, precio mínimo y máximo, dormitorios mínimos, baños mínimos y superficie mínima.
 - Supabase es la fuente principal; existe una copia local para demostración y respaldo.
+
+### Viviendas publicadas por clientes
+
+- Todas las cuentas normales continúan teniendo el tipo `client`.
+- Una misma cuenta puede comprar, guardar favoritos y publicar viviendas.
+- Las propiedades publicadas por usuarios incorporan `owner_id`.
+- Las políticas RLS permiten que solo el propietario cree o modifique sus anuncios.
+- La ruta protegida `/mis-viviendas` permite publicar y cambiar el estado entre disponible, reservada, vendida y retirada.
+- Para usuarios autenticados, el enlace `Vender` abre esta nueva zona privada.
+- Las 24 viviendas simuladas pertenecen al catálogo de demostración de Lumera y no utilizan cuentas o contraseñas ficticias.
+- Queda pendiente adaptar las conversaciones para que los mensajes de una vivienda particular lleguen directamente a su propietario.
 
 ## Base de datos y despliegues realizados
 
@@ -115,6 +126,8 @@ Migraciones nuevas aplicadas al Supabase remoto:
 
 - `20261029170000_secure_assistant_usage.sql`: límites y métricas.
 - `20261029173000_expand_property_catalog.sql`: ampliación del catálogo.
+- `20261029190000_add_client_property_ownership.sql`: propiedad y permisos de anuncios de clientes.
+- `20261029193000_add_demo_property_catalog.sql`: 24 viviendas simuladas adicionales.
 
 También se reconcilió el historial remoto de migraciones antiguas para evitar que Supabase intentara ejecutarlas de nuevo.
 

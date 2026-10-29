@@ -23,6 +23,7 @@ const AccountPage = lazy(() => import('./pages/AuthPages/AccountPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage/ChatPage'))
 const InboxPage = lazy(() => import('./pages/InboxPage/InboxPage'))
 const AssistantWidget = lazy(() => import('./components/AssistantWidget/AssistantWidget'))
+const MyPropertiesPage = lazy(() => import('./pages/MyPropertiesPage/MyPropertiesPage'))
 
 function RouteLoading() {
   return <section className="route-loading page-space" role="status">Cargando página…</section>
@@ -70,6 +71,29 @@ function App() {
 
   const toggleFavorite = (propertyId) => setFavorites((current) => current.includes(propertyId) ? current.filter((id) => id !== propertyId) : [...current, propertyId])
   const sharedProps = { favorites, onFavorite: toggleFavorite, properties, catalogStatus }
-  return <><Suspense fallback={<RouteLoading />}><Routes><Route element={<MainLayout favoriteCount={favorites.length} />}><Route index element={<HomePage {...sharedProps} />} /><Route path="inmuebles" element={<PropertiesPage {...sharedProps} />} /><Route path="inmuebles/:propertyId" element={<PropertyRoute {...sharedProps} />} /><Route path="mensajes" element={<ProtectedRoute><InboxPage /></ProtectedRoute>} /><Route path="mensajes/:propertyId" element={<ProtectedRoute><ChatPage properties={properties} /></ProtectedRoute>} /><Route path="favoritos" element={<FavoritesPage {...sharedProps} />} /><Route path="contacto" element={<ContactPage />} /><Route path="entrar" element={<LoginPage />} /><Route path="registro" element={<RegisterPage />} /><Route path="recuperar-contrasena" element={<ForgotPasswordPage />} /><Route path="restablecer-contrasena" element={<ResetPasswordPage />} /><Route path="mi-cuenta" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} /><Route path="preguntas-frecuentes" element={<><Seo title="Preguntas frecuentes" description="Resolvemos las dudas habituales sobre visitas, favoritos, compra, alquiler, venta y valoración de propiedades con Lumera." /><FaqPage /></>} /><Route path="privacidad" element={<><Seo title="Política de privacidad" description="Información sobre el tratamiento y la protección de datos personales en Lumera Inmobiliaria." /><PrivacyPage /></>} /><Route path="cookies" element={<><Seo title="Política de cookies" description="Información sobre cookies y almacenamiento local utilizado por Lumera Inmobiliaria." /><CookiesPage /></>} /><Route path="*" element={<><Seo title="Página no encontrada" description="La página solicitada no existe en Lumera Inmobiliaria." noIndex /><NotFoundPage /></>} /></Route></Routes></Suspense><Suspense fallback={null}><AssistantWidget properties={properties} /></Suspense></>
+  return <>
+    <Suspense fallback={<RouteLoading />}>
+      <Routes><Route element={<MainLayout favoriteCount={favorites.length} />}>
+        <Route index element={<HomePage {...sharedProps} />} />
+        <Route path="inmuebles" element={<PropertiesPage {...sharedProps} />} />
+        <Route path="inmuebles/:propertyId" element={<PropertyRoute {...sharedProps} />} />
+        <Route path="mensajes" element={<ProtectedRoute><InboxPage /></ProtectedRoute>} />
+        <Route path="mensajes/:propertyId" element={<ProtectedRoute><ChatPage properties={properties} /></ProtectedRoute>} />
+        <Route path="favoritos" element={<FavoritesPage {...sharedProps} />} />
+        <Route path="contacto" element={<ContactPage />} />
+        <Route path="entrar" element={<LoginPage />} />
+        <Route path="registro" element={<RegisterPage />} />
+        <Route path="recuperar-contrasena" element={<ForgotPasswordPage />} />
+        <Route path="restablecer-contrasena" element={<ResetPasswordPage />} />
+        <Route path="mi-cuenta" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        <Route path="mis-viviendas" element={<ProtectedRoute><MyPropertiesPage /></ProtectedRoute>} />
+        <Route path="preguntas-frecuentes" element={<><Seo title="Preguntas frecuentes" description="Resolvemos las dudas habituales sobre visitas, favoritos, compra, alquiler, venta y valoración de propiedades con Lumera." /><FaqPage /></>} />
+        <Route path="privacidad" element={<><Seo title="Política de privacidad" description="Información sobre el tratamiento y la protección de datos personales en Lumera Inmobiliaria." /><PrivacyPage /></>} />
+        <Route path="cookies" element={<><Seo title="Política de cookies" description="Información sobre cookies y almacenamiento local utilizado por Lumera Inmobiliaria." /><CookiesPage /></>} />
+        <Route path="*" element={<><Seo title="Página no encontrada" description="La página solicitada no existe en Lumera Inmobiliaria." noIndex /><NotFoundPage /></>} />
+      </Route></Routes>
+    </Suspense>
+    <Suspense fallback={null}><AssistantWidget properties={properties} /></Suspense>
+  </>
 }
 export default App
